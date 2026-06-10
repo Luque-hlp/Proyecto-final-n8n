@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrbanIA - Sistema Inteligente de Reportes Urbanos</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         GATEKEEPER OVERLAY — GPS Permission Gate
+         Se oculta automáticamente al obtener coordenadas (o al usar fallback)
+    ════════════════════════════════════════════════════════════════════════ -->
+    <div id="gatekeeper-overlay" class="overlay-container" aria-hidden="false">
+        <div class="overlay-card">
+            <div class="overlay-icon">📍</div>
+            <h2>Acceso de Hardware Requerido</h2>
+            <p>UrbanIA requiere telemetría GPS de alta precisión en tiempo real para validar
+               la autenticidad y ubicación exacta de los incidentes viales reportados.</p>
+            <div class="pulse-loader"></div>
+            <small>Por favor, otorgue permisos de ubicación al navegador para desbloquear el sistema.</small>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         APP CONTAINER
+    ════════════════════════════════════════════════════════════════════════ -->
+    <div class="app-container">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-logo">🏙️</span>
+                <div>
+                    <h1>UrbanIA</h1>
+                    <p>Gestión de Infraestructura Urbana Guiada por Visión Artificial</p>
+                </div>
+            </div>
+            <div class="system-status">
+                <span class="status-indicator active"></span> Core de Automatización Operativo (n8n)
+            </div>
+        </header>
+
+        <!-- Main grid -->
+        <main class="app-grid">
+
+            <!-- ─── Columna izquierda ─────────────────────────────────── -->
+            <div class="column-left">
+
+                <!-- Dashboard -->
+                <section class="dashboard-section" aria-label="Métricas del Sistema">
+                    <h2>Dashboard Metropolitano</h2>
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <h3>Incidentes Reportados</h3>
+                            <div id="stat-totales" class="metric-value">0</div>
+                        </div>
+                        <div class="metric-card critical">
+                            <h3>Riesgos Críticos (IA)</h3>
+                            <div id="stat-criticos" class="metric-value">0</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Formulario de incidencias -->
+                <section class="form-section">
+                    <h2>Registrar Nueva Incidencia</h2>
+                    <form id="incident-form" novalidate>
+
+                        <div class="form-group">
+                            <label for="ciudadano">Nombre del Ciudadano / Inspector</label>
+                            <input type="text" id="ciudadano" required
+                                   placeholder="Ej. Ing. Carlos Mendoza">
+                        </div>
+
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label for="correo">Correo Electrónico</label>
+                                <input type="email" id="correo" required
+                                       placeholder="carlos@ciudad.gov">
+                            </div>
+                            <div class="form-group">
+                                <label for="telefono">Teléfono de Contacto</label>
+                                <input type="tel" id="telefono" required
+                                       placeholder="+573001234567">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tipo-incidente">Tipo de Afectación Primaria</label>
+                            <select id="tipo-incidente" required>
+                                <option value="" disabled selected>Seleccione una opción...</option>
+                                <option value="bache">Asfalto / Baches Profundos</option>
+                                <option value="luminaria">Iluminación / Red Eléctrica</option>
+                                <option value="alcantarilla">Alcantarillado Abierto</option>
+                                <option value="semaforo">Semáforos / Señalización</option>
+                                <option value="otro">Estructural / Daño Mayor</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="descripcion">Descripción Técnica Preliminar</label>
+                            <textarea id="descripcion" rows="3" required
+                                      placeholder="Detalle dimensiones, impacto al tráfico o peligros evidentes..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="evidencia" class="custom-file-upload">
+                                📷 Subir Evidencia Fotográfica (Máx. 5MB)
+                            </label>
+                            <input type="file" id="evidencia" accept="image/jpeg,image/png,image/webp" required>
+                            <div id="file-chosen" class="file-info">Ningún archivo seleccionado</div>
+                            <!-- Preview de imagen — visible tras seleccionar archivo -->
+                            <img id="img-preview" src="" alt="Vista previa de la evidencia"
+                                 style="display:none; margin-top:10px; max-width:100%; max-height:180px;
+                                        border-radius:8px; border:1px solid #e2e8f0; object-fit:cover;">
+                        </div>
+
+                        <button type="submit" id="btn-submit-report" class="btn-primary">
+                            <span>Enviar Reporte y Activar IA</span>
+                        </button>
+
+                    </form>
+                </section>
+            </div>
+
+            <!-- ─── Columna derecha ──────────────────────────────────── -->
+            <div class="column-right">
+
+                <!-- Mapa -->
+                <section class="map-section">
+                    <h2>Geolocalización del Cuadrante en Tiempo Real</h2>
+                    <div id="map"></div>
+                </section>
+
+                <!-- Panel de auditoría -->
+                <section class="admin-section">
+                    <h2>Módulo de Auditoría de Casos</h2>
+                    <p class="section-desc">
+                        Consulte el estado del ciclo de vida e hidratación analítica de la IA
+                        mediante el Token ID del incidente.
+                    </p>
+
+                    <div class="search-box">
+                        <input type="text" id="search-token"
+                               placeholder="Ej: URB-ABCDEF23" maxlength="12"
+                               style="text-transform:uppercase; font-family:monospace;">
+                        <button type="button" id="btn-buscar-token" class="btn-secondary">Buscar</button>
+                    </div>
+
+                    <div id="search-result" class="result-placeholder">
+                        Introduzca un Token ID válido para recuperar el diagnóstico automatizado.
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; 2026 UrbanIA Labs. Arquitectura Avanzada para Smart Cities e Inspección de Daños.</p>
+        </footer>
+
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Módulo principal — type="module" habilita ES Modules nativos -->
+    <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
