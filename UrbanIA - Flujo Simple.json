@@ -1,0 +1,1287 @@
+{
+  "name": "UrbanIA - Flujo Simple",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8",
+          "mode": "list",
+          "cachedResultName": "Reporte_Ciudadanos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Telegram_Ciudadano",
+              "lookupValue": "={{ $('Append row in sheet').item.json.Telegram_Ciudadano }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        96
+      ],
+      "id": "abf2516f-2ab3-4018-8a7a-2c55c26f9f89",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RrQ58rzub648b5w9",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "chatId": "=8858088705",
+        "text": "!hola, todo esta funcionando correctamente, ciudadano!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        64
+      ],
+      "id": "f3682e15-1c72-42bf-9169-bab68268eb5d",
+      "name": "Send a text message1",
+      "webhookId": "4edf4879-f6e2-4043-902a-5d5814e1ba31",
+      "credentials": {
+        "telegramApi": {
+          "id": "q5LAifwCVMNxYuqB",
+          "name": "Telegram account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "rl": true,
+          "value": "1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 935617129,
+          "mode": "list",
+          "cachedResultName": "Hoja 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit#gid=935617129"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        304,
+        -528
+      ],
+      "id": "0e30c840-e6fe-4123-9669-bbcfd6de701f",
+      "name": "Append in Hoja 2 (Imagenes)",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RrQ58rzub648b5w9",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "4d53bed1-f40c-455b-862f-9be97891663b",
+        "options": {
+          "binaryPropertyName": "file"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -368,
+        -432
+      ],
+      "id": "77746b91-ef85-4687-80c3-006e58be7110",
+      "name": "Webhook1",
+      "webhookId": "4d53bed1-f40c-455b-862f-9be97891663b",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "34ec0881-5db4-42f3-97c9-92fd67565dc6",
+              "leftValue": "={{ $json.body.correo }}",
+              "rightValue": "@gmail.com",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -160,
+        -432
+      ],
+      "id": "0fba6451-02be-40fe-bbb9-95208b2701a9",
+      "name": "If1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "rl": true,
+          "value": "1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8",
+          "mode": "id"
+        },
+        "sheetName": {
+          "rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre_Ciudadano": "={{ $node[\"Webhook1\"].json.body.nombre }}",
+            "Telegram_Ciudadano": "={{ $node[\"Webhook1\"].json.body.telefono }}",
+            "Correo_Ciudadano": "={{ $node[\"Webhook1\"].json.body.correo }}",
+            "Descripcion": "={{ $node[\"Webhook1\"].json.body.descripcion }}",
+            "id": "={{ $node[\"Webhook1\"].json.body.token }}",
+            "Tipo De Incidente": "={{ $node[\"Webhook1\"].json.body.tipo }}",
+            "Latitud": "={{ $node[\"Webhook1\"].json.body.latitud }}",
+            "Longitud": "={{ $node[\"Webhook1\"].json.body.longitud }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nombre_Ciudadano",
+              "displayName": "Nombre_Ciudadano",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telegram_Ciudadano",
+              "displayName": "Telegram_Ciudadano",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Correo_Ciudadano",
+              "displayName": "Correo_Ciudadano",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Descripcion",
+              "displayName": "Descripcion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Tipo De Incidente",
+              "displayName": "Tipo De Incidente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        80,
+        -528
+      ],
+      "id": "7be5c951-a897-4b65-9553-349985000ae4",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RrQ58rzub648b5w9",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Actúa como el sistema inteligente de gestión de emergencias UrbanIA. Un ciudadano acaba de reportar un incidente a través de la web.\n\nDatos del reporte:\n\nCiudadano: {{ $node[\"Append row in sheet1\"].json[\"Nombre_Ciudadano\"] }}\nTipo de Incidente: {{ $node[\"Append row in sheet1\"].json[\"Tipo De Incidente\"] }}\nDescripción del daño: {{ $node[\"Append row in sheet1\"].json[\"Descripcion\"] }}\nCoordenadas: [{{ $node[\"Webhook1\"].json.body.latitud }}, {{ $node[\"Webhook1\"].json.body.longitud }}]\n\nTu tarea: Redacta un mensaje de Telegram sumamente empático, profesional y tranquilizador dirigido al ciudadano. Confírmale que su reporte ya fue guardado en nuestra base de datos con el Token ID: {{ $node[\"Webhook1\"].json.body.token }}. Dependiendo del tipo de incidente, estima un tiempo aproximado de llegada de las brigadas de urgencia de forma lógica (ej: 20 minutos para cables, 45 minutos para baches). Proporciona 2 consejos rápidos de seguridad.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        544,
+        -528
+      ],
+      "id": "46c6d35a-663c-4316-ac28-462cf19362a8",
+      "name": "AI Agent1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $node[\"Append row in sheet1\"].json[\"id\"] }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        672,
+        -320
+      ],
+      "id": "e14df9b1-a012-41e9-8cda-5ca0cb07e05c",
+      "name": "Simple Memory1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        -320
+      ],
+      "id": "83ff95dd-0bf1-4979-84e5-588ab422fe81",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Dm8UHzO5rHKLOapr",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "chatId": "8858088705",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        848,
+        -528
+      ],
+      "id": "0748a4e2-0f30-4028-97a4-5bf4c762eb9d",
+      "name": "Send a text message2",
+      "webhookId": "773a8c57-2946-491e-b1c3-354dca09892d",
+      "credentials": {
+        "telegramApi": {
+          "id": "q5LAifwCVMNxYuqB",
+          "name": "Telegram account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "reporte-ciudadano",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "a2773a13-5fe4-4cfc-9487-92da2ff15471",
+      "name": "Webhook - Recepción",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        640
+      ],
+      "webhookId": "reporte-ciudadano"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "be116ec1-b95d-4561-9266-34276fa8c153",
+      "name": "Preparar Datos",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        -528,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "reporte-ciudadano",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "c2105481-f683-4aac-836c-27806253d402",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        1760
+      ],
+      "webhookId": "reporte-ciudadano"
+    },
+    {
+      "parameters": {
+        "jsCode": "// BUG CORREGIDO: el formulario envía multipart/form-data.\n// n8n lo expone en $input.first().json directamente (no en .body).\n// Se prueban ambas rutas para máxima compatibilidad.\n\nconst item = $input.first();\nconst body = item.json?.body || item.json || {};\n\n// Log para debug — ver en n8n Execution qué llegó\nconsole.log('Payload recibido:', JSON.stringify(body));\n\nreturn [{\n  json: {\n    tokenId:       body.tokenId       || 'URB-' + Date.now(),\n    nombre:        body.nombre        || '',\n    email:         body.email         || '',\n    telefono:      body.telefono      || '',\n    tipoIncidente: body.tipoIncidente || '',\n    descripcion:   body.descripcion   || '',\n    latitud:       body.latitud       || '',\n    longitud:      body.longitud      || '',\n    fecha:         new Date().toISOString(),\n    tieneImagen:   Object.keys(item.binary || {}).length > 0\n  }\n}];"
+      },
+      "id": "8a242610-ee73-4058-88a4-ba91c7383fe7",
+      "name": "Extraer Datos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        1760
+      ]
+    },
+    {
+      "parameters": {
+        "text": "Eres un experto en infraestructura urbana y visión artificial. Analiza la siguiente descripción del ciudadano: '{{ $json.descripcion }}'. Tipo de incidente reportado: {{ $json.tipoIncidente }}.\n\nResponde ÚNICAMENTE con un objeto JSON válido (sin markdown, sin bloques de código, sin texto extra) con esta estructura exacta:\n{\n  \"tipo_incidente\": \"bache|cableado|fuga|alumbrado|otro\",\n  \"severidad\": \"Crítica|Moderada|Baja\",\n  \"score_confianza\": 85,\n  \"riesgo_inmediato\": false,\n  \"resumen_tecnico\": \"Descripción técnica breve del daño\",\n  \"accion_recomendada\": \"despacho_inmediato|validacion_manual|monitoreo\"\n}",
+        "options": {
+          "systemMessage": "Responde siempre en formato JSON puro. No incluyas explicaciones adicionales."
+        }
+      },
+      "id": "554b1153-dbb3-4295-b806-263c81d5bb64",
+      "name": "AI Agent - Análisis",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1,
+      "position": [
+        96,
+        1760
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const aiOutput = $input.first().json.output;\nlet cleanJson = aiOutput.replace(/```json/g, '').replace(/```/g, '').trim();\n\ntry {\n  const parsed = JSON.parse(cleanJson);\n  return [{ json: { ...$input.first().json, aiAnalysis: parsed } }];\n} catch (e) {\n  // Si no parsea, crear un análisis por defecto para no romper el flujo\n  return [{ json: { ...$input.first().json, aiAnalysis: {\n    tipo_incidente: $input.first().json.tipoIncidente || 'otro',\n    severidad: 'Moderada',\n    score_confianza: 50,\n    riesgo_inmediato: false,\n    resumen_tecnico: $input.first().json.descripcion || 'Sin análisis disponible',\n    accion_recomendada: 'validacion_manual',\n    error: 'No se pudo parsear la respuesta de la IA'\n  } } }];\n}"
+      },
+      "id": "57b4abb3-b5d8-46ae-ab2d-84ce73724bbc",
+      "name": "Parsear Respuesta IA",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        1760
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8",
+          "mode": "list",
+          "cachedResultName": "Reporte_Ciudadanos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Tokenid": "={{ $json.tokenId }}",
+            "Nombre_Ciudadano": "={{ $json.nombre }}",
+            "Correo_Ciudadano": "={{ $json.email }}",
+            "Telegram_Ciudadano": "={{ $json.telefono }}",
+            "Descripcion": "={{ $json.descripcion }}",
+            "Tipo De Incidente": "={{ $json.tipoIncidente }}",
+            "Latitud": "={{ $json.latitud }}",
+            "Longitud": "={{ $json.longitud }}",
+            "Fecha": "={{ $json.fecha }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Tokenid",
+              "displayName": "Tokenid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nombre_Ciudadano",
+              "displayName": "Nombre_Ciudadano",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Correo_Ciudadano",
+              "displayName": "Correo_Ciudadano",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Telegram_Ciudadano",
+              "displayName": "Telegram_Ciudadano",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Descripcion",
+              "displayName": "Descripcion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo De Incidente",
+              "displayName": "Tipo De Incidente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Latitud",
+              "displayName": "Latitud",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Longitud",
+              "displayName": "Longitud",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "111c9069-6500-4f3d-8fe7-af5da3d67cb3",
+      "name": "Google Sheets - Hoja 1 (Datos)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        592,
+        1664
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RrQ58rzub648b5w9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8",
+          "mode": "list",
+          "cachedResultName": "Reporte_Ciudadanos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 935617129,
+          "mode": "list",
+          "cachedResultName": "Hoja 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit#gid=935617129"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "TokenId": "={{ $json.tokenId }}",
+            "Imagen_URL": "Pendiente de subida a Drive",
+            "Severidad": "={{ $json.aiAnalysis.severidad }}",
+            "Score": "={{ $json.aiAnalysis.score_confianza }}",
+            "Riesgo": "={{ $json.aiAnalysis.riesgo_inmediato }}",
+            "Resumen": "={{ $json.aiAnalysis.resumen_tecnico }}",
+            "Acción": "={{ $json.aiAnalysis.accion_recomendada }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "TokenId",
+              "displayName": "TokenId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Imagen_URL",
+              "displayName": "Imagen_URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Severidad",
+              "displayName": "Severidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Riesgo",
+              "displayName": "Riesgo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resumen",
+              "displayName": "Resumen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Acción",
+              "displayName": "Acción",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3f8765bf-ad01-42dc-979f-9cc52dabdd95",
+      "name": "Google Sheets - Hoja 2 (IA)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        784,
+        1664
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RrQ58rzub648b5w9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "8858088705",
+        "text": "🚨 *REPORTE URBANO RECIBIDO*\n\n🆔 *Token ID:* {{ $json.tokenId }}\n🔧 *Incidente:* {{ $json.aiAnalysis.tipo_incidente }}\n⚠️ *Prioridad:* {{ $json.aiAnalysis.severidad }}\n📝 *Resumen:* {{ $json.aiAnalysis.resumen_tecnico }}\n\n✅ Reporte registrado y en procesamiento.",
+        "additionalFields": {}
+      },
+      "id": "04b8a79d-d24d-4292-99bf-7b45620e0844",
+      "name": "Telegram - Notificación",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        976,
+        1664
+      ],
+      "webhookId": "cb6046d9-ff76-4b80-a7e3-00dd7b400151",
+      "credentials": {
+        "telegramApi": {
+          "id": "q5LAifwCVMNxYuqB",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"success\": true, \"tokenId\": \"{{ $json.tokenId }}\", \"message\": \"Reporte procesado correctamente\" }",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "f39a6f29-ffdd-4db1-8c37-72b6266243a7",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        1664
+      ]
+    },
+    {
+      "parameters": {
+        "path": "metricas-dashboard",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "203c7f69-2667-40c9-805d-78de7d3c5c39",
+      "name": "Webhook - Métricas",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        688,
+        2400
+      ],
+      "webhookId": "metricas-dashboard"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8",
+          "mode": "list",
+          "cachedResultName": "Reporte_Ciudadanos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "1f1beb73-353f-478d-a35c-5d9a2b63a9cf",
+      "name": "Google Sheets - Leer Hoja 1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        896,
+        2288
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RrQ58rzub648b5w9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8",
+          "mode": "list",
+          "cachedResultName": "Reporte_Ciudadanos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 935617129,
+          "mode": "list",
+          "cachedResultName": "Hoja 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit#gid=935617129"
+        },
+        "options": {}
+      },
+      "id": "75af8b1c-27f9-4de4-87d0-06481c9fbf0b",
+      "name": "Google Sheets - Leer Hoja 2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.4,
+      "position": [
+        896,
+        2496
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RrQ58rzub648b5w9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const hoja1Data = $('Google Sheets - Leer Hoja 1').all();\nconst hoja2Data = $('Google Sheets - Leer Hoja 2').all();\n\nconst incidentes = hoja1Data.map(item => item.json);\nconst analisisIA = hoja2Data.map(item => item.json);\n\nconst totalIncidentes = incidentes.length;\n\nlet criticos = 0, moderados = 0, bajos = 0, sinClasificar = 0;\nconst tiposIncidente = {};\n\nanalisisIA.forEach(registro => {\n  const severidad = (registro.Severidad || '').trim();\n  if (severidad === 'Crítica' || severidad === 'Critica') criticos++;\n  else if (severidad === 'Moderada') moderados++;\n  else if (severidad === 'Baja') bajos++;\n  else sinClasificar++;\n\n  const tipo = registro['Tipo De Incidente'] || 'sin_clasificar';\n  tiposIncidente[tipo] = (tiposIncidente[tipo] || 0) + 1;\n});\n\nlet scorePromedio = 0, scoresValidos = 0;\nanalisisIA.forEach(r => {\n  const s = parseInt(r.Score) || 0;\n  if (s > 0) { scorePromedio += s; scoresValidos++; }\n});\nscorePromedio = scoresValidos > 0 ? Math.round(scorePromedio / scoresValidos) : 0;\n\nreturn [{\n  json: {\n    exito: true,\n    timestamp: new Date().toISOString(),\n    totales:  totalIncidentes,\n    criticos: criticos,\n    metricas_generales: {\n      total_incidentes:    totalIncidentes,\n      incidentes_criticos: criticos,\n      incidentes_moderados: moderados,\n      incidentes_bajos:    bajos,\n      sin_clasificar:      sinClasificar\n    },\n    analisis_ia: { score_promedio_confianza: scorePromedio, total_analizados: scoresValidos },\n    por_tipo_incidente: tiposIncidente,\n    estado_sistema: {\n      criticos_activos: criticos,\n      requiere_atencion: criticos > 0,\n      nivel_alerta: criticos > 5 ? 'ALTO' : criticos > 2 ? 'MEDIO' : 'BAJO'\n    }\n  }\n}];"
+      },
+      "id": "ba3c1914-6239-4e9a-b9f9-18abec68b7c4",
+      "name": "Calcular Métricas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "327a56a0-c6c3-4dba-ba4b-760c0e6ffc14",
+      "name": "Respond to Webhook1",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1296,
+        2400
+      ]
+    },
+    {
+      "parameters": {
+        "path": "consultar-caso",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "4d2a164b-ead9-44a1-844e-efcc635cf5cd",
+      "name": "Webhook Consulta",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        2352
+      ],
+      "webhookId": "consultar-caso"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8",
+          "mode": "list",
+          "cachedResultName": "Reporte_Ciudadanos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "b63619a0-4edd-476e-80db-60ee6600428b",
+      "name": "Buscar Hoja 1",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.3,
+      "position": [
+        -240,
+        2240
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RrQ58rzub648b5w9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8",
+          "mode": "list",
+          "cachedResultName": "Reporte_Ciudadanos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 935617129,
+          "mode": "list",
+          "cachedResultName": "Hoja 2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit#gid=935617129"
+        },
+        "options": {}
+      },
+      "id": "63272d3c-087e-4e18-92b4-df2c3c2c4847",
+      "name": "Buscar Hoja 2",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.3,
+      "position": [
+        -240,
+        2448
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RrQ58rzub648b5w9",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const hoja1 = $('Buscar Hoja 1').all();\nconst hoja2 = $('Buscar Hoja 2').all();\n\nif (hoja1.length === 0) {\n  return [{ json: { success: false, error: 'Token no encontrado en la base de datos.' } }];\n}\n\nconst datos = hoja1[0].json;\nconst ia    = hoja2.length > 0 ? hoja2[0].json : null;\n\nreturn [{\n  json: {\n    success:            true,\n    token:              datos.Tokenid,\n    ciudadano:          datos.Nombre_Ciudadano    || 'Anónimo',\n    tipo_incidente:     datos['Tipo De Incidente'] || 'No especificado',\n    severidad:          ia?.Severidad             || 'Evaluando',\n    score:              ia?.Score                 || 0,\n    diagnostico:        ia?.Resumen               || 'Sin diagnóstico disponible aún.',\n    accion_recomendada: ia?.['Acción']             || 'Despachar cuadrilla estándar.',\n    latitud:            datos.Latitud,\n    longitud:           datos.Longitud,\n    fecha:              datos.Fecha               || new Date().toISOString()\n  }\n}];"
+      },
+      "id": "d6bee509-2aad-4dc0-a588-83402ed32cd3",
+      "name": "Procesar Datos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        2352
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "2c32aad8-91dc-4c04-9976-7e3bdf1dcf9d",
+      "name": "Responder Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        2352
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -32,
+        2000
+      ],
+      "id": "20f4fab7-96ed-4f94-b1a4-797ae7849c8c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Dm8UHzO5rHKLOapr",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        []
+      ]
+    },
+    "Append in Hoja 2 (Imagenes)": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Append in Hoja 2 (Imagenes)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Recepción": {
+      "main": [
+        [
+          {
+            "node": "Preparar Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Datos": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extraer Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer Datos": {
+      "main": [
+        [
+          {
+            "node": "AI Agent - Análisis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - Análisis": {
+      "main": [
+        [
+          {
+            "node": "Parsear Respuesta IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear Respuesta IA": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Hoja 1 (Datos)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Hoja 1 (Datos)": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Hoja 2 (IA)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Hoja 2 (IA)": {
+      "main": [
+        [
+          {
+            "node": "Telegram - Notificación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram - Notificación": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Métricas": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Leer Hoja 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Leer Hoja 1": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets - Leer Hoja 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets - Leer Hoja 2": {
+      "main": [
+        [
+          {
+            "node": "Calcular Métricas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular Métricas": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Consulta": {
+      "main": [
+        [
+          {
+            "node": "Buscar Hoja 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Hoja 1": {
+      "main": [
+        [
+          {
+            "node": "Buscar Hoja 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Hoja 2": {
+      "main": [
+        [
+          {
+            "node": "Procesar Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Datos": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Análisis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fcbbf863-5793-4015-9b58-57344beb10d1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f54403ed873256ddc418f8cd8f14e157b2ac1d2404c55dbdecd81d3c758a18ee"
+  },
+  "id": "29AphHw83Vse0i5y",
+  "tags": []
+}
