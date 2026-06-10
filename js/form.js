@@ -1,15 +1,14 @@
 /**
  * UrbanIA - Módulo del Formulario de Incidencias
- * @description Manejo transaccional del formulario, validación avanzada y empaquetamiento de payloads.
  *
- * CORRECCIONES APLICADAS:
- *  - Claves de CONFIG.VALIDATIONS alineadas (ALLOWED_IMAGE_TYPES / MAX_IMAGE_SIZE_BYTES)
- *  - buildPayload() ahora incluye: correo, telefono, tipo_incidente
- *  - Validación de formato de correo y teléfono con regex
- *  - Preview de imagen antes del envío
- *  - Modal persistente con Token ID tras envío exitoso
- *  - Listener de file input que actualiza el nombre del archivo
- *  - Botón de submit deshabilitado durante el envío (prevención de doble click)
+ * BUG CORREGIDO:
+ *  El nodo "Extraer Datos" de n8n lee: body.tokenId, body.nombre, body.email,
+ *  body.telefono, body.tipoIncidente, body.descripcion, body.latitud, body.longitud
+ *
+ *  El buildPayload() anterior usaba nombres distintos (token, ciudadano, correo,
+ *  tipo_incidente) que n8n no reconocía, dejando todos los campos vacíos en el Sheet.
+ *
+ *  Ahora los nombres del FormData coinciden EXACTAMENTE con lo que lee n8n.
  */
 
 import CONFIG    from './config.js';
@@ -19,17 +18,12 @@ import { sendReport }   from './api.js';
 import { incrementReports } from './dashboard.js';
 import { showNotification, toggleLoader, showTokenModal } from './ui.js';
 
-// ─── Listener de actualización de nombre de archivo ──────────────────────────
+// ─── File input ───────────────────────────────────────────────────────────────
 
-/**
- * Inicializa el listener del input file para mostrar el nombre del archivo
- * y una previsualización de la imagen seleccionada.
- * Debe invocarse desde main.js en el bootstrap.
- */
 export function initFileInput() {
-    const fileInput    = document.getElementById('evidencia');
-    const fileChosen   = document.getElementById('file-chosen');
-    const previewImg   = document.getElementById('img-preview');
+    const fileInput  = document.getElementById('evidencia');
+    const fileChosen = document.getElementById('file-chosen');
+    const previewImg = document.getElementById('img-preview');
 
     if (!fileInput) return;
 
@@ -42,13 +36,11 @@ export function initFileInput() {
             return;
         }
 
-        // Actualizar texto informativo
         if (fileChosen) {
             const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
             fileChosen.textContent = `${file.name} (${sizeMB} MB)`;
         }
 
-        // Preview visual de la imagen seleccionada
         if (previewImg && CONFIG.VALIDATIONS.ALLOWED_IMAGE_TYPES.includes(file.type)) {
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -62,11 +54,6 @@ export function initFileInput() {
 
 // ─── Validaciones ─────────────────────────────────────────────────────────────
 
-/**
- * Valida el archivo de imagen adjunto.
- * @param {File} file
- * @returns {boolean}
- */
 export function validateFile(file) {
     if (!file) {
         showNotification('La evidencia fotográfica del daño es obligatoria.', 'error');
@@ -83,11 +70,6 @@ export function validateFile(file) {
     return true;
 }
 
-/**
- * Valida el formato del correo electrónico.
- * @param {string} correo
- * @returns {boolean}
- */
 function validateEmail(correo) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
     if (!emailRegex.test(correo.trim())) {
@@ -97,11 +79,6 @@ function validateEmail(correo) {
     return true;
 }
 
-/**
- * Valida el formato del teléfono (mínimo 7 dígitos, acepta + y espacios).
- * @param {string} telefono
- * @returns {boolean}
- */
 function validatePhone(telefono) {
     const phoneRegex = /^\+?[\d\s\-()]{7,15}$/;
     if (!phoneRegex.test(telefono.trim())) {
@@ -114,49 +91,37 @@ function validatePhone(telefono) {
 // ─── Payload ──────────────────────────────────────────────────────────────────
 
 /**
- * Empaqueta todos los campos del formulario en un FormData multipart.
- * Incluye correo, telefono y tipo_incidente (campos que faltaban).
+ * Empaqueta los datos en FormData con los nombres de campo que n8n espera.
  *
- * @param {string} token
- * @param {string} ciudadano
- * @param {string} correo
- * @param {string} telefono
- * @param {string} tipo
- * @param {string} descripcion
- * @param {File}   file
- * @returns {FormData}
+ * El nodo "Extraer Datos" en n8n lee body.tokenId, body.nombre, body.email,
+ * body.telefono, body.tipoIncidente, body.descripcion, body.latitud, body.longitud.
+ * Los nombres deben coincidir exactamente.
  */
-export function buildPayload(token, ciudadano, correo, telefono, tipo, descripcion, file) {
+export function buildPayload(tokenId, nombre, email, telefono, tipoIncidente, descripcion, file) {
     const { lat, lng } = getState().coordinates;
 
     const formData = new FormData();
-    formData.append('token',           token);
-    formData.append('ciudadano',       ciudadano.trim());
-    formData.append('correo',          correo.trim().toLowerCase());
-    formData.append('telefono',        telefono.trim());
-    formData.append('tipo_incidente',  tipo);
-    formData.append('descripcion',     descripcion.trim());
-    formData.append('latitud',         lat  ?? CONFIG.MAP.DEFAULT_LAT);
-    formData.append('longitud',        lng  ?? CONFIG.MAP.DEFAULT_LNG);
-    formData.append('file',            file);
+    formData.append('tokenId',       tokenId);
+    formData.append('nombre',        nombre.trim());
+    formData.append('email',         email.trim().toLowerCase());
+    formData.append('telefono',      telefono.trim());
+    formData.append('tipoIncidente', tipoIncidente);
+    formData.append('descripcion',   descripcion.trim());
+    formData.append('latitud',       lat  ?? CONFIG.MAP.DEFAULT_LAT);
+    formData.append('longitud',      lng  ?? CONFIG.MAP.DEFAULT_LNG);
+    formData.append('file',          file, file.name);
 
     return formData;
 }
 
-// ─── Submit principal ─────────────────────────────────────────────────────────
+// ─── Submit ───────────────────────────────────────────────────────────────────
 
-/**
- * Handler principal del formulario. Orquesta validación, envío y feedback.
- * @param {Event} event
- */
 export async function submitReport(event) {
     event.preventDefault();
 
-    // Protección contra doble envío
     const currentState = getState();
     if (currentState.isSubmitting) return;
 
-    // Captura de campos
     const formElement      = event.target;
     const ciudadanoInput   = document.getElementById('ciudadano');
     const correoInput      = document.getElementById('correo');
@@ -168,17 +133,16 @@ export async function submitReport(event) {
 
     const file = fileInput?.files[0];
 
-    // ── Validaciones en cadena ─────────────────────────────────────────────
+    // Validaciones
     if (!validateFile(file))                          return;
     if (!validateEmail(correoInput?.value || ''))     return;
     if (!validatePhone(telefonoInput?.value || ''))   return;
-
     if (!tipoInput?.value) {
         showNotification('Seleccione el tipo de afectación.', 'error');
         return;
     }
 
-    // ── Bloqueo de UI ──────────────────────────────────────────────────────
+    // Bloqueo de UI
     toggleLoader(true);
     setState({ isSubmitting: true });
     if (submitBtn) {
@@ -186,7 +150,6 @@ export async function submitReport(event) {
         submitBtn.querySelector('span').textContent = 'Enviando reporte...';
     }
 
-    // Token generado en el cliente (se reemplaza por el del servidor si n8n lo devuelve)
     let assignedToken = generateToken();
 
     try {
@@ -200,15 +163,15 @@ export async function submitReport(event) {
             file
         );
 
-        // Envío a n8n
         const response = await sendReport(payload);
 
-        // Si n8n devuelve su propio token, lo usamos (mayor robustez)
-        if (response?.token && typeof response.token === 'string') {
+        // n8n devuelve { success, tokenId, message } — usar su tokenId si viene
+        if (response?.tokenId && typeof response.tokenId === 'string') {
+            assignedToken = response.tokenId;
+        } else if (response?.token && typeof response.token === 'string') {
             assignedToken = response.token;
         }
 
-        // Persistencia y feedback optimista
         saveToken(assignedToken);
         incrementReports();
 
@@ -219,13 +182,10 @@ export async function submitReport(event) {
         const fileChosen = document.getElementById('file-chosen');
         if (fileChosen) fileChosen.textContent = 'Ningún archivo seleccionado';
 
-        // Modal persistente con Token ID (reemplaza el toast efímero)
         showTokenModal(assignedToken);
 
     } catch (error) {
         console.error('[Form Transaction Error]:', error);
-
-        // Detectar si es un problema de red/offline
         if (!navigator.onLine) {
             showNotification('Sin conexión a Internet. Verifique su red e intente nuevamente.', 'error');
         } else {
