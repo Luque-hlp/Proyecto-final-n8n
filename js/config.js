@@ -18,7 +18,7 @@ const CONFIG = {
          * n8n Webhook Path: /webhook/urbania/submit
          */
         get SUBMIT_INCIDENT() {
-            return `${this.BASE_URL}/webhook/urbania/submit`;
+            return `${this.BASE_URL}https://coherent-matron-barrier.ngrok-free.dev/webhook-test/reporte-ciudadano`;
         },
 
         /**
@@ -26,7 +26,7 @@ const CONFIG = {
          * n8n Webhook Path: /webhook/urbania/metrics
          */
         get GET_METRICS() {
-            return `${this.BASE_URL}/webhook/urbania/metrics`;
+            return `${this.BASE_URL}https://coherent-matron-barrier.ngrok-free.dev/webhook-test/92d08042-a52d-48ec-84ee-0e2da3215457`;
         },
 
         /**
@@ -34,7 +34,7 @@ const CONFIG = {
          * n8n Webhook Path: /webhook/urbania/query?token=URB-XXXXXXXX
          */
         get QUERY_TOKEN() {
-            return `${this.BASE_URL}/webhook/urbania/query?token=`;
+            return `${this.BASE_URL}https://coherent-matron-barrier.ngrok-free.dev/webhook-test/3e6835b3-f6d9-47aa-8a4f-d2109eb9e64f`;
         }
     },
 
