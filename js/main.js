@@ -63,11 +63,12 @@ async function bootstrap() {
     requestLocation();
 
     // Dashboard: carga inicial + polling automático
-    await loadDashboard().then(() => {
+    try {
+        await loadDashboard();
         updateServerStatus('online');
-    }).catch(() => {
+    } catch {
         updateServerStatus('offline');
-    });
+    }
 
     startPolling();
 

@@ -1,15 +1,20 @@
 /**
  * UrbanIA - Configuración Global
- *
- * ⚠️  AL REINICIAR NGROK: cambia SOLO BASE_URL (sin barra final).
+ * ⚠️ AL REINICIAR NGROK: cambia SOLO BASE_URL (sin barra final).
  */
 const CONFIG = {
     WEBHOOKS: {
         BASE_URL: "https://coherent-matron-barrier.ngrok-free.dev",
 
-        get SUBMIT_INCIDENT() { return `${this.BASE_URL}https://coherent-matron-barrier.ngrok-free.dev/webhook-test/reporte-ciudadano`; },
-        get GET_METRICS()     { return `${this.BASE_URL}https://coherent-matron-barrier.ngrok-free.dev/webhook-test/metricas-dashboard`; },
-        get QUERY_TOKEN()     { return `${this.BASE_URL}https://coherent-matron-barrier.ngrok-free.dev/webhook-test/consultar-caso`; }
+        get SUBMIT_INCIDENT() { 
+            return `${this.BASE_URL}/webhook/reporte-ciudadano`; 
+        },
+        get GET_METRICS() { 
+            return `${this.BASE_URL}/webhook/metricas-dashboard`; 
+        },
+        get QUERY_TOKEN() { 
+            return `${this.BASE_URL}/webhook/consultar-caso?token=`; 
+        }
     },
     MAP: {
         DEFAULT_ZOOM: 16,

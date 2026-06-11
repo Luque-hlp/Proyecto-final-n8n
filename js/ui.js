@@ -244,25 +244,21 @@ export function showTokenModal(token) {
  * @param {'online'|'offline'|'checking'} status
  */
 export function updateServerStatus(status) {
-    const indicator = document.querySelector('.status-indicator');
-    const statusText = document.querySelector('.system-status');
-    if (!indicator || !statusText) return;
+    const indicator   = document.querySelector('.status-indicator');
+    const statusLabel = document.getElementById('status-label');
+    if (!indicator) return;
 
     const states = {
-        online:   { color: '#10b981', shadow: '#10b981', label: 'Core de Automatización Operativo (n8n)' },
-        offline:  { color: '#ef4444', shadow: '#ef4444', label: 'Core Offline — Verificar ngrok/n8n' },
-        checking: { color: '#f59e0b', shadow: '#f59e0b', label: 'Verificando conexión...' }
+        online:   { color: '#10b981', label: 'Core de Automatización Operativo (n8n)' },
+        offline:  { color: '#ef4444', label: 'Core Offline — Verificar ngrok/n8n' },
+        checking: { color: '#f59e0b', label: 'Verificando conexión...' }
     };
 
     const s = states[status] || states.checking;
     indicator.style.backgroundColor = s.color;
-    indicator.style.boxShadow = `0 0 8px ${s.shadow}`;
+    indicator.style.boxShadow       = `0 0 8px ${s.color}`;
 
-    // Actualizar solo el texto, preservando el indicador en el DOM
-    const textNode = statusText.lastChild;
-    if (textNode && textNode.nodeType === Node.TEXT_NODE) {
-        textNode.textContent = ` ${s.label}`;
-    }
+    if (statusLabel) statusLabel.textContent = s.label;
 }
 
 // ─── Detección de red ─────────────────────────────────────────────────────────
