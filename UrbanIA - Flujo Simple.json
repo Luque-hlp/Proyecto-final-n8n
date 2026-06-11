@@ -366,7 +366,7 @@
     {
       "parameters": {
         "path": "metricas-dashboard",
-        "responseMode": "lastNode",
+        "responseMode": "responseNode",
         "options": {
           "allowedOrigins": "*"
         }
@@ -561,7 +561,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "=={{ JSON.stringify($json) }}",
+        "responseBody": "=\"responseBody\": \"={ \\\"success\\\": true, \\\"tokenId\\\": \\\"{{ $('Extraer Datos1')... }}\"",
         "options": {
           "responseHeaders": {
             "entries": [
