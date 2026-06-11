@@ -5,11 +5,11 @@
  */
 const CONFIG = {
     WEBHOOKS: {
-        BASE_URL: "https://coherent-matron-barrier.ngrok-free.app",
+        BASE_URL: "https://coherent-matron-barrier.ngrok-free.dev",
 
-        get SUBMIT_INCIDENT() { return `${this.BASE_URL}/webhook/reporte-ciudadano`; },
-        get GET_METRICS()     { return `${this.BASE_URL}/webhook/metricas-dashboard`; },
-        get QUERY_TOKEN()     { return `${this.BASE_URL}/webhook/consultar-caso?token=`; }
+        get SUBMIT_INCIDENT() { return `${this.BASE_URL}https://coherent-matron-barrier.ngrok-free.dev/webhook-test/reporte-ciudadano`; },
+        get GET_METRICS()     { return `${this.BASE_URL}https://coherent-matron-barrier.ngrok-free.dev/webhook-test/metricas-dashboard`; },
+        get QUERY_TOKEN()     { return `${this.BASE_URL}https://coherent-matron-barrier.ngrok-free.dev/webhook-test/consultar-caso`; }
     },
     MAP: {
         DEFAULT_ZOOM: 16,
