@@ -1,20 +1,26 @@
 /**
  * UrbanIA - Data Gateway
  *
- * SOLUCIÓN CORS SIN PROXY / SIN NODE.JS:
+ * SOLUCIÓN CORS: usar mode: 'no-cors' para GET requests simples
+ * que devuelven texto/JSON sin headers personalizados.
  *
- * El problema raíz: el navegador envía un "preflight" OPTIONS antes de cada
- * petición con headers personalizados. Ngrok bloquea ese OPTIONS y devuelve
- * ERR_CONNECTION_REFUSED antes de que llegue a n8n.
+ * Para consulta y métricas usamos un workaround:
+ * Cambiamos el mode a 'no-cors' y leemos desde una URL con callback
+ * o usamos un iframe proxy. 
  *
- * Solución: eliminar TODOS los headers personalizados de las peticiones.
- * Sin headers custom → el navegador NO envía preflight → ngrok no bloquea.
+ * SOLUCIÓN REAL: usar mode: 'cors' pero con no-cors para evitar preflight.
+ * Las peticiones GET simples (sin headers custom) deben funcionar con CORS
+ * si n8n devuelve Access-Control-Allow-Origin: *
  *
- * El header "ngrok-skip-browser-warning" ya NO es necesario porque ngrok
- * solo muestra su página HTML en respuestas de navegador (no en fetch API).
+ * Si n8n no devuelve ese header, la única solución sin backend es
+ * usar un proxy CORS público temporal para la demo.
  */
 
 import CONFIG from './config.js';
+
+// Proxy CORS para desarrollo/demo — evita el bloqueo del navegador
+// cuando n8n no devuelve el header Access-Control-Allow-Origin
+const CORS_PROXY = 'https://corsproxy.io/?';
 
 async function handleResponse(response) {
     if (!response.ok) {
@@ -25,7 +31,6 @@ async function handleResponse(response) {
     if (contentType.includes('application/json')) {
         return response.json();
     }
-    // Intentar parsear como JSON de todos modos (n8n a veces no pone el content-type)
     const text = await response.text();
     try {
         return JSON.parse(text);
@@ -35,33 +40,38 @@ async function handleResponse(response) {
 }
 
 /**
- * Envía el reporte — SIN headers personalizados para evitar el preflight CORS.
- * FormData es una petición "simple" que el navegador envía directamente.
+ * Envía el reporte — FormData sin headers = petición simple = sin preflight.
  */
 export async function sendReport(formDataPayload) {
     if (!(formDataPayload instanceof FormData)) {
         throw new Error('[API Protocol Error]: El payload debe ser FormData.');
     }
 
-    // Sin headers = sin preflight = ngrok no bloquea
     return fetch(CONFIG.WEBHOOKS.SUBMIT_INCIDENT, {
         method: 'POST',
         body:   formDataPayload,
         mode:   'cors'
-        // ⚠️ NO poner headers aquí — eso es lo que dispara el preflight
     }).then(handleResponse);
 }
 
 /**
- * Obtiene métricas del dashboard.
- * GET sin headers custom = petición simple = sin preflight.
+ * Obtiene métricas — usa proxy CORS si el directo falla.
  */
 export async function getDashboardData() {
-    const raw = await fetch(CONFIG.WEBHOOKS.GET_METRICS, {
-        method: 'GET',
-        mode:   'cors'
-        // Sin Accept personalizado — el navegador lo maneja solo
-    }).then(handleResponse);
+    // Intentar directo primero
+    let raw;
+    try {
+        raw = await fetch(CONFIG.WEBHOOKS.GET_METRICS, {
+            method: 'GET',
+            mode:   'cors'
+        }).then(handleResponse);
+    } catch {
+        // Si falla por CORS, usar proxy
+        const proxyUrl = CORS_PROXY + encodeURIComponent(CONFIG.WEBHOOKS.GET_METRICS);
+        raw = await fetch(proxyUrl, {
+            method: 'GET'
+        }).then(handleResponse);
+    }
 
     const totales  = raw?.totales  ?? raw?.metricas_generales?.total_incidentes  ?? 0;
     const criticos = raw?.criticos ?? raw?.metricas_generales?.incidentes_criticos ?? 0;
@@ -70,17 +80,27 @@ export async function getDashboardData() {
 }
 
 /**
- * Consulta un caso por Token ID.
+ * Consulta un caso por Token ID — usa proxy CORS si el directo falla.
  */
 export async function searchCase(token) {
     if (!token) throw new Error('[API Validation Error]: Token requerido.');
 
-    const queryUrl = `${CONFIG.WEBHOOKS.QUERY_TOKEN}${encodeURIComponent(token.trim().toUpperCase())}`;
+    const directUrl = `${CONFIG.WEBHOOKS.QUERY_TOKEN}${encodeURIComponent(token.trim().toUpperCase())}`;
 
-    const raw = await fetch(queryUrl, {
-        method: 'GET',
-        mode:   'cors'
-    }).then(handleResponse);
+    let raw;
+    try {
+        // Intentar directo primero
+        raw = await fetch(directUrl, {
+            method: 'GET',
+            mode:   'cors'
+        }).then(handleResponse);
+    } catch {
+        // Si falla por CORS, usar proxy
+        const proxyUrl = CORS_PROXY + encodeURIComponent(directUrl);
+        raw = await fetch(proxyUrl, {
+            method: 'GET'
+        }).then(handleResponse);
+    }
 
     if (raw?.success === false || raw?.error) {
         throw new Error(raw?.error || 'Token no encontrado');

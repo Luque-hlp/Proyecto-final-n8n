@@ -4,18 +4,18 @@
       "parameters": {
         "httpMethod": "POST",
         "path": "reporte-ciudadano",
-        "responseMode": "lastNode",
+        "responseMode": "responseNode",
         "options": {
           "allowedOrigins": "*"
         }
       },
-      "id": "719bf4b8-2bec-4032-9e67-ec329ec446f1",
+      "id": "b36657f8-3aa7-4fa3-9adc-07cdd53071d3",
       "name": "Webhook1",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
-        -432,
-        -160
+        1520,
+        192
       ],
       "webhookId": "reporte-ciudadano"
     },
@@ -23,42 +23,42 @@
       "parameters": {
         "jsCode": "const item = $input.first();\nconst body = item.json?.body || item.json || {};\n\nconst get = (key) => body[key] ?? '';\n\n// El token viene del frontend o se genera aquí\nconst token = get('token') || ('URB-' + Date.now());\n\nreturn [{\n  json: {\n    tokenId:       token,\n    nombre:        get('ciudadano'),      // ← el frontend envía 'ciudadano'\n    email:         get('correo'),         // ← el frontend envía 'correo'\n    telefono:      get('telefono'),\n    tipoIncidente: get('tipo_incidente'), // ← el frontend envía 'tipo_incidente'\n    descripcion:   get('descripcion'),\n    latitud:       get('latitud'),\n    longitud:      get('longitud'),\n    fecha:         new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' }),\n    tieneImagen:   Object.keys(item.binary || {}).length > 0\n  }\n}];"
       },
-      "id": "30ca7dc0-44e0-4eea-8fd3-43d33993ae93",
+      "id": "d751709f-53ad-4cdd-b986-b663e4d79f2a",
       "name": "Extraer Datos1",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -224,
-        -160
+        1728,
+        192
       ]
     },
     {
       "parameters": {
-        "text": "Eres un experto en infraestructura urbana. Descripción del ciudadano: '{{ $json.descripcion }}'. Tipo: {{ $json.tipoIncidente }}.\n\nResponde ÚNICAMENTE con JSON puro sin markdown:\n{\n  \"tipo_incidente\": \"bache|cableado|fuga|alumbrado|otro\",\n  \"severidad\": \"Crítica|Moderada|Baja\",\n  \"score_confianza\": 75,\n  \"riesgo_inmediato\": false,\n  \"resumen_tecnico\": \"descripción breve\",\n  \"accion_recomendada\": \"despacho_inmediato|validacion_manual|monitoreo\"\n}",
+        "text": "=Eres un experto en infraestructura urbana. Descripción del ciudadano: '{{ $json.descripcion }}'. Tipo: {{ $json.tipoIncidente }}.\n\nResponde ÚNICAMENTE con JSON puro sin markdown:\n{\n  \"tipo_incidente\": \"bache|cableado|fuga|alumbrado|otro\",\n  \"severidad\": \"Crítica|Moderada|Baja\",\n  \"score_confianza\": 75,\n  \"riesgo_inmediato\": false,\n  \"resumen_tecnico\": \"descripción breve\",\n  \"accion_recomendada\": \"despacho_inmediato|validacion_manual|monitoreo\"\n}",
         "options": {
           "systemMessage": "Solo JSON puro. Sin texto adicional ni bloques de código."
         }
       },
-      "id": "3ab8aa09-2647-4130-960f-e39933934d5a",
+      "id": "9ec0f92f-dd9e-43cc-abd5-c6d3917c8ce7",
       "name": "AI Agent - Análisis1",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1,
       "position": [
-        -16,
-        -160
+        1936,
+        192
       ]
     },
     {
       "parameters": {
         "jsCode": "const raw = $input.first().json.output || '';\nconst clean = raw.replace(/```json/g,'').replace(/```/g,'').trim();\ntry {\n  const ai = JSON.parse(clean);\n  return [{ json: { ...$input.first().json, aiAnalysis: ai } }];\n} catch(e) {\n  return [{ json: { ...$input.first().json, aiAnalysis: {\n    tipo_incidente: $input.first().json.tipoIncidente || 'otro',\n    severidad: 'Moderada', score_confianza: 50,\n    riesgo_inmediato: false,\n    resumen_tecnico: $input.first().json.descripcion || 'Sin análisis',\n    accion_recomendada: 'validacion_manual'\n  }}}];\n}"
       },
-      "id": "9e35c576-3a43-46f1-8a4d-010921110e07",
+      "id": "a3155b7f-5ad4-4afb-b3d3-e741b1075b6b",
       "name": "Parsear Respuesta IA1",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        272,
-        -160
+        2224,
+        192
       ]
     },
     {
@@ -68,7 +68,8 @@
           "__rl": true,
           "value": "1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8",
           "mode": "list",
-          "cachedResultName": "Reporte_Ciudadanos"
+          "cachedResultName": "Reporte_Ciudadanos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XcWazR8jnZ31JyeAhany8eu4DFVFRMLMUuWLl71Ume8/edit?usp=drivesdk"
         },
         "sheetName": {
           "__rl": true,
@@ -82,12 +83,12 @@
           "value": {
             "Tokenid": "={{ $('Extraer Datos1').item.json.tokenId }}",
             "Nombre_Ciudadano": "={{ $('Extraer Datos1').item.json.nombre }}",
+            "Telegram_Ciudadano": "={{ $('Extraer Datos1').item.json.email }}",
             "Correo_Ciudadano": "={{ $('Extraer Datos1').item.json.email }}",
             "Descripcion": "={{ $('Extraer Datos1').item.json.descripcion }}",
             "Tipo De Incidente": "={{ $('Extraer Datos1').item.json.tipoIncidente }}",
-            "Telegram_Ciudadano": "={{ $('Extraer Datos1').item.json.telefono }}",
-            "Latitud": "={{ $('Extraer Datos1').item.json.latitud }}",
             "Longitud": "={{ $('Extraer Datos1').item.json.longitud }}",
+            "Latitud": "={{ $('Extraer Datos1').item.json.latitud }}",
             "Fecha": "={{ $('Extraer Datos1').item.json.fecha }}"
           },
           "matchingColumns": [],
@@ -153,8 +154,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": true
             },
             {
               "id": "Longitud",
@@ -163,8 +163,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": true
             },
             {
               "id": "Fecha",
@@ -173,8 +172,7 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
+              "canBeUsedToMatch": true
             }
           ],
           "attemptToConvertTypes": false,
@@ -182,17 +180,17 @@
         },
         "options": {}
       },
-      "id": "e927e69c-4e32-4fde-a7b8-a767f8b36c57",
+      "id": "ff1277a4-3851-4490-928d-89edba8b8362",
       "name": "Google Sheets - Hoja 1 (Datos)1",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4,
       "position": [
-        464,
-        -160
+        2416,
+        192
       ],
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "RrQ58rzub648b5w9",
+          "id": "7PFZPBnMy8gTXtaW",
           "name": "Google Sheets account"
         }
       }
@@ -294,20 +292,15 @@
         },
         "options": {}
       },
-      "id": "a4a47e3c-a812-4407-8ba2-1caafed63a9a",
+      "id": "1d9c9a80-a03a-4e1c-b7b2-bf610c7cde50",
       "name": "Google Sheets - Hoja 2 (IA)1",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4,
       "position": [
-        656,
-        -160
+        2608,
+        192
       ],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "RrQ58rzub648b5w9",
-          "name": "Google Sheets account"
-        }
-      }
+      "credentials": {}
     },
     {
       "parameters": {
@@ -315,13 +308,13 @@
         "text": "=🚨 *REPORTE URBANO*\n🆔 *Token:* {{ $json.TokenId }}\n🔧 *Incidente:* {{ $('Google Sheets - Hoja 1 (Datos)1').item.json.Descripcion }}\n⚠️ *Prioridad:* {{ $json.Severidad }}\n📝 *Nota final:* {{ $json.Score }}",
         "additionalFields": {}
       },
-      "id": "4d272e19-6697-4f35-b38f-54706608de4c",
+      "id": "bedc80f6-a93a-4bb5-a92e-1d8dcb9c903f",
       "name": "Telegram - Notificación1",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1,
       "position": [
-        848,
-        -160
+        3008,
+        256
       ],
       "webhookId": "3587b0ec-8bf0-4e63-96cb-1c560adb17d3",
       "credentials": {
@@ -354,13 +347,13 @@
           }
         }
       },
-      "id": "c2958e13-dd81-4164-a249-520966ea1757",
+      "id": "fd85794d-ee3a-468c-940a-cfe8a3415d17",
       "name": "Respond to Webhook2",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        1056,
-        -160
+        3184,
+        256
       ]
     },
     {
@@ -371,13 +364,13 @@
           "allowedOrigins": "*"
         }
       },
-      "id": "2719af7d-3978-4acc-af0c-fc7f1ab76ef4",
+      "id": "762d134a-a2a8-4174-b82f-63d4bed2b5ba",
       "name": "Webhook - Métricas1",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        512,
-        240
+        2464,
+        592
       ],
       "webhookId": "metricas-dashboard"
     },
@@ -397,20 +390,15 @@
         },
         "options": {}
       },
-      "id": "9bb2655d-f947-4188-a599-8108dc43d358",
+      "id": "b561b3bc-1a8e-45e4-b31b-421f36ca8953",
       "name": "Google Sheets - Leer Hoja ",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
       "position": [
-        704,
-        240
+        2656,
+        592
       ],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "RrQ58rzub648b5w9",
-          "name": "Google Sheets account"
-        }
-      }
+      "credentials": {}
     },
     {
       "parameters": {
@@ -428,38 +416,33 @@
         },
         "options": {}
       },
-      "id": "5406d62f-e465-4c73-b370-0d85e2bc53ae",
+      "id": "f9d6cf0b-92fa-466b-bc5e-e3167c4ef205",
       "name": "Google Sheets - Leer Hoja 3",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.4,
       "position": [
-        928,
-        240
+        2880,
+        592
       ],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "RrQ58rzub648b5w9",
-          "name": "Google Sheets account"
-        }
-      }
+      "credentials": {}
     },
     {
       "parameters": {
         "jsCode": "const h1 = $('Google Sheets - Leer Hoja ').all();\nconst h2 = $('Google Sheets - Leer Hoja 3').all();\n\n// Contadores de severidad\nlet criticos  = 0;\nlet moderados = 0;\nlet bajos     = 0;\n\n// Tipos de incidente\nconst tipoConteo = {};\n\nh2.forEach(r => {\n  const s = (r.json.Severidad || '').trim();\n  if (s === 'Crítica' || s === 'Critica') criticos++;\n  else if (s === 'Moderada')              moderados++;\n  else if (s === 'Baja')                  bajos++;\n});\n\nh1.forEach(r => {\n  const tipo = (r.json['Tipo De Incidente'] || 'otro').trim();\n  tipoConteo[tipo] = (tipoConteo[tipo] || 0) + 1;\n});\n\n// Último incidente registrado\nconst ultimo = h1.length > 0\n  ? {\n      token:    h1[h1.length - 1].json.Tokenid,\n      tipo:     h1[h1.length - 1].json['Tipo De Incidente'],\n      fecha:    h1[h1.length - 1].json.Fecha\n    }\n  : null;\n\nreturn [{\n  json: {\n    // Lo que el frontend necesita\n    totales:  h1.length,\n    criticos,\n    moderados,\n    bajos,\n    // Extra para evaluación académica\n    por_tipo:       tipoConteo,\n    ultimo_reporte: ultimo,\n    timestamp:      new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' }),\n    metricas_generales: {\n      total_incidentes:    h1.length,\n      incidentes_criticos: criticos,\n      incidentes_moderados:moderados,\n      incidentes_bajos:    bajos,\n      tasa_criticos: h1.length > 0\n        ? ((criticos / h1.length) * 100).toFixed(1) + '%'\n        : '0%'\n    }\n  }\n}];"
       },
-      "id": "3b73be73-de61-4cc9-80d1-62e780d721b5",
+      "id": "b98e86f5-24a3-4b97-98b9-4a5fe147392a",
       "name": "Calcular Métricas1",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        528,
-        464
+        2480,
+        816
       ]
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ $json }}",
+        "responseBody": "=={{ $json }}",
         "options": {
           "responseHeaders": {
             "entries": [
@@ -479,30 +462,30 @@
           }
         }
       },
-      "id": "2d4f023e-cb7c-4c83-a195-bced3fa63ed0",
+      "id": "c0b1cf8d-1275-4f4f-a69e-b61a8bf9be79",
       "name": "Respond to Webhook3",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        736,
-        464
+        2688,
+        816
       ]
     },
     {
       "parameters": {
         "path": "consultar-caso",
-        "responseMode": "lastNode",
+        "responseMode": "responseNode",
         "options": {
           "allowedOrigins": "*"
         }
       },
-      "id": "2df008b9-1be6-4c4e-8663-01537b13eafe",
+      "id": "3d6a3fa2-75cd-435b-bd26-13f55cb0024f",
       "name": "Webhook Consulta1",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
-        -480,
-        224
+        1472,
+        576
       ],
       "webhookId": "consultar-caso"
     },
@@ -524,39 +507,21 @@
           "values": [
             {
               "lookupColumn": "Tokenid",
-              "lookupValue": "={{ $('Webhook Consulta1').first().json.query?.token || $('Webhook Consulta1').first().json.body?.token }}"
+              "lookupValue": "={{ $json.body.resources[1].body.text }}"
             }
           ]
         },
         "options": {}
       },
-      "id": "416b95a0-1370-4aa6-b604-acdf4ee74b5e",
+      "id": "342f7d01-f04f-479b-8034-9f3655e1580b",
       "name": "Buscar Hoja ",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.3,
       "position": [
-        -272,
-        224
+        1680,
+        576
       ],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "RrQ58rzub648b5w9",
-          "name": "Google Sheets account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const h1 = $('Buscar Hoja ').all();\nconst h2 = $('Buscar Hoja 2').all();\n\n// Si no encontró nada en Hoja 1\nif (h1.length === 0) {\n  return [{\n    json: {\n      success: false,\n      error: 'Token no encontrado. Verifique el ID e intente nuevamente.'\n    }\n  }];\n}\n\nconst d  = h1[0].json;\nconst ia = h2.length > 0 ? h2[0].json : null;\n\n// Severidad con color para el frontend\nconst severidadConfig = {\n  'Crítica':  { nivel: 'Crítica',  color: '#dc2626', score_minimo: 70 },\n  'Moderada': { nivel: 'Moderada', color: '#ea580c', score_minimo: 40 },\n  'Baja':     { nivel: 'Baja',     color: '#16a34a', score_minimo: 0  }\n};\n\nconst severidad = ia?.Severidad || 'Evaluando';\nconst configSev = severidadConfig[severidad] || { color: '#64748b' };\n\nreturn [{\n  json: {\n    success:           true,\n    token:             d.Tokenid             || 'N/A',\n    ciudadano:         d.Nombre_Ciudadano    || 'Anónimo',\n    correo:            d.Correo_Ciudadano    || 'No registrado',\n    telefono:          d.Telefono            || 'No registrado',\n    tipo_incidente:    d['Tipo De Incidente']|| 'No especificado',\n    descripcion:       d.Descripcion         || 'Sin descripción.',\n    latitud:           d.Latitud             || null,\n    longitud:          d.Longitud            || null,\n    fecha:             d.Fecha               || 'Fecha desconocida',\n    // Datos de la IA\n    severidad:         severidad,\n    color_severidad:   configSev.color,\n    score:             ia?.Score             || 0,\n    diagnostico:       ia?.Resumen           || 'Análisis pendiente.',\n    accion_recomendada:ia?.['Acción']        || 'Despachar cuadrilla estándar.',\n    // Enlace directo a Maps\n    maps_url: (d.Latitud && d.Longitud)\n      ? `https://maps.google.com/?q=${d.Latitud},${d.Longitud}`\n      : null\n  }\n}];"
-      },
-      "id": "4e0868cd-1859-404f-9120-db3a3a99aaa1",
-      "name": "Procesar Datos1",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        48,
-        224
-      ]
+      "credentials": {}
     },
     {
       "parameters": {
@@ -581,13 +546,13 @@
           }
         }
       },
-      "id": "154bd106-b9ff-4ee1-89b5-147436c7c24c",
+      "id": "bf0b6266-d0e4-4fe2-b2fd-4f8e5193db0b",
       "name": "Responder Webhook1",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        -400,
-        448
+        1472,
+        800
       ]
     },
     {
@@ -598,10 +563,10 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        -16,
-        0
+        1936,
+        352
       ],
-      "id": "f9861c72-f3bc-4216-a7e1-2f7e7ea5b2fb",
+      "id": "64cbe570-236d-44a6-8096-c8bf2ed4d926",
       "name": "Google Gemini Chat Model1",
       "credentials": {
         "googlePalmApi": {
@@ -628,26 +593,21 @@
           "values": [
             {
               "lookupColumn": "TokenId",
-              "lookupValue": "=={{ $('Webhook Consulta1').first().json.query?.token || $('Webhook Consulta1').first().json.body?.token }}"
+              "lookupValue": "={{ $('Webhook Consulta1').item.json.body.resources[4].body.text }}"
             }
           ]
         },
         "options": {}
       },
-      "id": "b6875f32-caf3-4a85-9f75-7ed0668a1359",
+      "id": "bd744cce-a188-4d56-9782-a5ec6754dc16",
       "name": "Buscar Hoja 2",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.3,
       "position": [
-        -128,
-        224
+        1856,
+        576
       ],
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "RrQ58rzub648b5w9",
-          "name": "Google Sheets account"
-        }
-      }
+      "credentials": {}
     },
     {
       "parameters": {
@@ -660,10 +620,10 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        0,
-        448
+        1840,
+        800
       ],
-      "id": "a9daa1db-e67b-4e29-b3b0-e35647a9d4f0",
+      "id": "a59aa34b-bc63-441b-ab5e-6636ee378532",
       "name": "Formatear Mensaje de Telegram",
       "webhookId": "712d5e19-b5fc-4cbc-a3a7-484519c40c8d",
       "credentials": {
@@ -680,11 +640,89 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -192,
-        448
+        1648,
+        800
       ],
-      "id": "ebeac00b-c34e-479c-92f1-22e6b6beff62",
+      "id": "846e9d75-7562-4ba8-98c8-b91851111004",
       "name": "Formatear Telegram"
+    },
+    {
+      "parameters": {
+        "jsCode": "const h1 = $('Buscar Hoja ').all();\nconst h2 = $('Buscar Hoja 2').all();\n\n// Si no encontró nada en Hoja 1\nif (h1.length === 0) {\n  return [{\n    json: {\n      success: false,\n      error: 'Token no encontrado. Verifique el ID e intente nuevamente.'\n    }\n  }];\n}\n\nconst d  = h1[0].json;\nconst ia = h2.length > 0 ? h2[0].json : null;\n\n// Severidad con color para el frontend\nconst severidadConfig = {\n  'Crítica':  { nivel: 'Crítica',  color: '#dc2626', score_minimo: 70 },\n  'Moderada': { nivel: 'Moderada', color: '#ea580c', score_minimo: 40 },\n  'Baja':     { nivel: 'Baja',     color: '#16a34a', score_minimo: 0  }\n};\n\nconst severidad = ia?.Severidad || 'Evaluando';\nconst configSev = severidadConfig[severidad] || { color: '#64748b' };\n\nreturn [{\n  json: {\n    success:           true,\n    token:             d.Tokenid             || 'N/A',\n    ciudadano:         d.Nombre_Ciudadano    || 'Anónimo',\n    correo:            d.Correo_Ciudadano    || 'No registrado',\n    telefono:          d.Telefono            || 'No registrado',\n    tipo_incidente:    d['Tipo De Incidente']|| 'No especificado',\n    descripcion:       d.Descripcion         || 'Sin descripción.',\n    latitud:           d.Latitud             || null,\n    longitud:          d.Longitud            || null,\n    fecha:             d.Fecha               || 'Fecha desconocida',\n    // Datos de la IA\n    severidad:         severidad,\n    color_severidad:   configSev.color,\n    score:             ia?.Score             || 0,\n    diagnostico:       ia?.Resumen           || 'Análisis pendiente.',\n    accion_recomendada:ia?.['Acción']        || 'Despachar cuadrilla estándar.',\n    // Enlace directo a Maps\n    maps_url: (d.Latitud && d.Longitud)\n      ? `https://maps.google.com/?q=${d.Latitud},${d.Longitud}`\n      : null\n  }\n}];"
+      },
+      "id": "58e5f2ae-655b-4a2b-bce5-3825fb1d28ca",
+      "name": "Procesar Datos1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e83a7c1a-e857-4905-8e6e-04f264b961fd",
+              "leftValue": "={{ $json.Imagen_URL }}",
+              "rightValue": "false",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "78f9a9d3-d1c3-4938-b890-df075e301d78",
+              "leftValue": "={{ $json.Score }}",
+              "rightValue": 50,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2768,
+        192
+      ],
+      "id": "48f150f7-5ede-42da-9fe5-8995468aa80e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "8858088705",
+        "text": "=🚨 *REPORTE URBANO*\n🆔 *Token:* {{ $json.TokenId }}\n🔧 *Incidente:* {{ $('Google Sheets - Hoja 1 (Datos)1').item.json.Descripcion }}\n⚠️ *Prioridad:* {{ $json.Severidad }}\n📝 *Nota final:* {{ $json.Score }}",
+        "additionalFields": {}
+      },
+      "id": "7d7d3999-af0b-457b-8a56-bb2908db119b",
+      "name": "Telegram - Notificación",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        3008,
+        112
+      ],
+      "webhookId": "3587b0ec-8bf0-4e63-96cb-1c560adb17d3",
+      "credentials": {
+        "telegramApi": {
+          "id": "q5LAifwCVMNxYuqB",
+          "name": "Telegram account"
+        }
+      }
     }
   ],
   "connections": {
@@ -747,7 +785,7 @@
       "main": [
         [
           {
-            "node": "Telegram - Notificación1",
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -831,17 +869,6 @@
         ]
       ]
     },
-    "Procesar Datos1": {
-      "main": [
-        [
-          {
-            "node": "Responder Webhook1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Responder Webhook1": {
       "main": [
         [
@@ -880,6 +907,35 @@
         [
           {
             "node": "Formatear Mensaje de Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Procesar Datos1": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Telegram - Notificación",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram - Notificación1",
             "type": "main",
             "index": 0
           }
